@@ -2,7 +2,7 @@
 
 (function(){
 
-  var module = angular.module('geonode_main_search', [], function($locationProvider) {
+  var module = angular.module('geonode_main_search', ['ngclipboard'], function($locationProvider) {
       if (window.navigator.userAgent.indexOf("MSIE") == -1){
           $locationProvider.html5Mode({
             enabled: true,
@@ -251,7 +251,16 @@
     $scope.query.limit = $scope.query.limit || CLIENT_RESULTS_LIMIT;
     $scope.query.offset = $scope.query.offset || 0;
     $scope.page = Math.round(($scope.query.offset / $scope.query.limit) + 1);
-   
+    
+    $scope.onCopySuccess = function(e) {
+    	$(e.trigger).trigger('copied', ['Copied!']);
+     	e.clearSelection();
+    };
+
+    $scope.onCopyError = function(e) {
+	$(e.trigger).trigger('copied', ['Failed to Copy!']);
+    }
+
     //Get data from apis and make them available to the page
     function query_api(data){
       $http.get(Configs.url, {params: data || {}}).success(function(data){
